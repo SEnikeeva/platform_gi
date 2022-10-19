@@ -16,3 +16,24 @@ class Project(models.Model):
 
     class Meta:
         ordering = ['name']
+
+
+class OilDeposit(models.Model):
+    name = models.CharField(max_length=50)
+
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='oil_deposits',
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']

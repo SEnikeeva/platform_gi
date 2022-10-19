@@ -5,6 +5,7 @@ from rest.views import *
 
 router = DefaultRouter()
 router.register(r'project', ProjectViewSet, basename='api-project')
+router.register(r'oil_deposit', OilDepositViewSet, basename='api-project')
 
 urlpatterns = [
     path('', include(router.urls)),
