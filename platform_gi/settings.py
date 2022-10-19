@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'platform_gi.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'platform_gi',
+        'NAME': 'geo_atlas',
         'USER': 'postgres',
         'PASSWORD': '7c056266',
         'HOST': 'localhost',

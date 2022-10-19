@@ -65,7 +65,7 @@ class LoginView(APIView):
             samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
         )
 
-        csrf.get_token(request)
+        # csrf.get_token(request)
         response.data = {
             "message": "Success authorization",
             "data": data
