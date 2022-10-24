@@ -37,3 +37,23 @@ class OilDeposit(models.Model):
 
     class Meta:
         ordering = ['name']
+
+
+class Well(models.Model):
+    name = models.CharField(max_length=50)
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='wells',
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']

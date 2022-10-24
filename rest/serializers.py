@@ -18,7 +18,18 @@ class OilDepositSerializer(serializers.ModelSerializer):
     author = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    wells = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = OilDeposit
+        fields = '__all__'
+
+
+class WellSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Well
         fields = '__all__'

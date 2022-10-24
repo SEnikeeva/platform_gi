@@ -6,3 +6,4 @@ from rest.models import *
 
 admin.site.register(Project)
 admin.site.register(OilDeposit)
+admin.site.register(Well)
