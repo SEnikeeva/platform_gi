@@ -19,6 +19,7 @@ class OilDepositSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     wells = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    coords = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = OilDeposit
@@ -29,7 +30,18 @@ class WellSerializer(serializers.ModelSerializer):
     author = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    coords = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Well
+        fields = '__all__'
+
+
+class CoordsSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Coords
         fields = '__all__'

@@ -7,6 +7,7 @@ router = DefaultRouter()
 router.register(r'project', ProjectViewSet, basename='api-project')
 router.register(r'oil_deposit', OilDepositViewSet, basename='api-deposit')
 router.register(r'well', WellViewSet, basename='api-well')
+router.register(r'coords', CoordsViewSet, basename='api-coords')
 
 urlpatterns = [
     path('', include(router.urls)),

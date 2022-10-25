@@ -57,3 +57,30 @@ class Well(models.Model):
 
     class Meta:
         ordering = ['name']
+
+
+class Coords(models.Model):
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='coords',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='coords',
+        on_delete=models.CASCADE,
+    )
+    x = models.FloatField()
+    y = models.FloatField()
+    level = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.x}, {self.y}"
+
+    class Meta:
+        ordering = ['level']
