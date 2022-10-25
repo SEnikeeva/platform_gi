@@ -55,6 +55,7 @@ class CoordsViewSet(viewsets.ModelViewSet):
         oil_deposit = request.data["oil_deposit"]
 
         coords_dict = read_coords(file)
+        coords_list = []
         for el in coords_dict:
             well_name = el['well']
             well = Well.objects.filter(name=well_name).all()
@@ -69,13 +70,13 @@ class CoordsViewSet(viewsets.ModelViewSet):
             x = el['x']
             y = el['y']
             level = el['level']
-            new_coords = Coords(
+            coords_list.append(Coords(
                 well_id=well_id,
                 oil_deposit_id=oil_deposit,
                 x=x,
                 y=y,
                 level=level
-            )
-            new_coords.save()
+            ))
+        Coords.objects.bulk_create(coords_list)
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)
