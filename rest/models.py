@@ -77,10 +77,40 @@ class Coords(models.Model):
     )
     x = models.FloatField()
     y = models.FloatField()
-    level = models.CharField(max_length=50)
+    level = models.CharField(max_length=50, null=True)
+    layer = models.CharField(max_length=50, null=True)
 
     def __str__(self):
         return f"{self.x}, {self.y}"
 
     class Meta:
         ordering = ['level']
+
+
+class Perforation(models.Model):
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='perforations',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='perforations',
+        on_delete=models.CASCADE,
+    )
+    perf_type = models.CharField(max_length=255)
+    date = models.DateTimeField()
+    top = models.FloatField()
+    bot = models.FloatField()
+    layer = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.layer}, {self.top}"
+
+    class Meta:
+        ordering = ['layer']
