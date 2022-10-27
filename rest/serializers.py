@@ -57,3 +57,23 @@ class PerforationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Perforation
         fields = '__all__'
+
+
+class EORPRodSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = EORProd
+        fields = '__all__'
+
+
+class EORInjSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = EORInj
+        fields = '__all__'

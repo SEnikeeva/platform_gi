@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from .readers.coords_reader import read_coords
+from .readers.eor_reader import read_eor_prod, read_eor_inj
 from .readers.perf_reader import read_perfs
 from .serializers import *
 
@@ -59,7 +60,7 @@ class CoordsViewSet(viewsets.ModelViewSet):
         coords_list = []
         for el in coords_dict:
             well_name = el['well']
-            well = Well.objects.filter(name=well_name).all()
+            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
             if len(well) == 0:
                 new_well = Well.objects.create(
                     oil_deposit_id=oil_deposit,
@@ -96,7 +97,7 @@ class PerforationViewSet(viewsets.ModelViewSet):
         perf_ints = read_perfs(file)
         perf_ints_list = []
         for well_name, perf_data in perf_ints.items():
-            well = Well.objects.filter(name=well_name).all()
+            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
             if len(well) == 0:
                 new_well = Well.objects.create(
                     oil_deposit_id=oil_deposit,
@@ -116,5 +117,89 @@ class PerforationViewSet(viewsets.ModelViewSet):
                     date=perf_int.get('date')
                 ))
         Perforation.objects.bulk_create(perf_ints_list)
+        return Response({"status": "success"},
+                        status.HTTP_201_CREATED)
+
+
+class EORProdViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = EORPRodSerializer
+
+    def get_queryset(self):
+        return EORProd.objects.filter(author=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def upload_data(self, request):
+        file = request.FILES["file"]
+        oil_deposit = request.data["oil_deposit"]
+        unit = request.data["unit"]
+
+        eor_prod = read_eor_prod(file, unit=unit)
+        eor_prod_list = []
+        for well_name, eor_data in eor_prod.items():
+            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
+            if len(well) == 0:
+                new_well = Well.objects.create(
+                    oil_deposit_id=oil_deposit,
+                    name=well_name,
+                )
+                well_id = new_well.id
+            else:
+                well_id = well[0].id
+            for ed in eor_data:
+                eor_prod_list.append(EORProd(
+                    well_id=well_id,
+                    oil_deposit_id=oil_deposit,
+                    date=ed.get('date'),
+                    level=ed.get('level'),
+                    layer=ed.get('layer'),
+                    work_hours=ed.get('work_hours'),
+                    q_oil=ed.get('q_oil'),
+                    q_water=ed.get('q_water'),
+                    fluid_rate=ed.get('fluid_rate'),
+                    sgw=ed.get('sgw')
+                ))
+        EORProd.objects.bulk_create(eor_prod_list)
+        return Response({"status": "success"},
+                        status.HTTP_201_CREATED)
+
+
+class EORInjViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = EORInjSerializer
+
+    def get_queryset(self):
+        return EORInj.objects.filter(author=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def upload_data(self, request):
+        file = request.FILES["file"]
+        oil_deposit = request.data["oil_deposit"]
+
+        eor_inj = read_eor_inj(file)
+        eor_inj_list = []
+        for well_name, eor_data in eor_inj.items():
+            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
+            if len(well) == 0:
+                new_well = Well.objects.create(
+                    oil_deposit_id=oil_deposit,
+                    name=well_name,
+                )
+                well_id = new_well.id
+            else:
+                well_id = well[0].id
+            for ed in eor_data:
+                eor_inj_list.append(EORInj(
+                    well_id=well_id,
+                    oil_deposit_id=oil_deposit,
+                    date=ed.get('date'),
+                    level=ed.get('level'),
+                    layer=ed.get('layer'),
+                    work_hours=ed.get('work_hours'),
+                    q_water3=ed.get('q_water3'),
+                    acceleration=ed.get('acceleration'),
+                    agent_code=ed.get('agent_code'),
+                ))
+        EORInj.objects.bulk_create(eor_inj_list)
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)
