@@ -1,3 +1,6 @@
+from rest.models import Well
+
+
 def to_dict(df, index_name, columns=None):
     df.set_index(index_name, inplace=True)
     # перестановка столбцов для сохранения установленного порядка
@@ -18,3 +21,16 @@ def is_contains(w, a):
         if v in w:
             return True
     return False
+
+
+def get_well_id(well_name, oil_deposit_id=None):
+    well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit_id).all()
+    if len(well) == 0:
+        new_well = Well.objects.create(
+            oil_deposit_id=oil_deposit_id,
+            name=well_name,
+        )
+        well_id = new_well.id
+    else:
+        well_id = well[0].id
+    return well_id

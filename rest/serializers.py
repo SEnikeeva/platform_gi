@@ -93,3 +93,13 @@ class WCReasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = WCReason
         fields = '__all__'
+
+
+class PressureSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Pressure
+        fields = '__all__'

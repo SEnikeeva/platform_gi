@@ -13,6 +13,7 @@ router.register(r'eor_prod', EORProdViewSet, basename='api-eor-prod')
 router.register(r'eor_inj', EORInjViewSet, basename='api-eor-inj')
 router.register(r'mineralization', MineralizationViewSet, basename='api-mineralization')
 router.register(r'wc_reason', WCReasonViewSet, basename='api-wc-reason')
+router.register(r'pressure', PressureViewSet, basename='api-pressure')
 
 urlpatterns = [
     path('', include(router.urls)),

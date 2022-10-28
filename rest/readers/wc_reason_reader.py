@@ -1,7 +1,6 @@
 from dateutil import parser
 
 from rest.readers.read_service import processing_df, read_df
-import chardet
 
 
 def read_wc_reason(file):

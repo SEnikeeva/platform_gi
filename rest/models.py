@@ -232,3 +232,29 @@ class WCReason(models.Model):
     class Meta:
         ordering = ['date']
 
+
+class Pressure(models.Model):
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='pressures',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='pressures',
+        on_delete=models.CASCADE,
+    )
+    date = models.DateTimeField()
+    pressure = models.FloatField()
+    type = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.well}, {self.pressure}"
+
+    class Meta:
+        ordering = ['date']

@@ -49,7 +49,7 @@ def read_eor_inj(file):
 def read_eor_prod(file, unit='t'):
     eor_df = read(file)
     columns = ['well', 'year', 'month', 'date', 'work_hours', 'q_oil', 'q_water', 'sgw', 'level', 'layer']
-    drop_cols = [col for col in eor_df.columns if col not in columns ]
+    drop_cols = [col for col in eor_df.columns if col not in columns]
     eor_df.drop(columns=drop_cols,
                 inplace=True)
 

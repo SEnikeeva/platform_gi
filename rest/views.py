@@ -8,8 +8,10 @@ from .readers.coords_reader import read_coords
 from .readers.eor_reader import read_eor_prod, read_eor_inj
 from .readers.mineralization_reader import read_mineralization
 from .readers.perf_reader import read_perfs
+from .readers.pressure_reader import read_pressure
 from .readers.wc_reason_reader import read_wc_reason
 from .serializers import *
+from .util import get_well_id
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -61,16 +63,7 @@ class CoordsViewSet(viewsets.ModelViewSet):
         coords_dict = read_coords(file)
         coords_list = []
         for el in coords_dict:
-            well_name = el['well']
-            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
-            if len(well) == 0:
-                new_well = Well.objects.create(
-                    oil_deposit_id=oil_deposit,
-                    name=well_name,
-                )
-                well_id = new_well.id
-            else:
-                well_id = well[0].id
+            well_id = get_well_id(el['well'], oil_deposit)
             coords_list.append(Coords(
                 well_id=well_id,
                 oil_deposit_id=oil_deposit,
@@ -99,15 +92,7 @@ class PerforationViewSet(viewsets.ModelViewSet):
         perf_ints = read_perfs(file)
         perf_ints_list = []
         for well_name, perf_data in perf_ints.items():
-            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
-            if len(well) == 0:
-                new_well = Well.objects.create(
-                    oil_deposit_id=oil_deposit,
-                    name=well_name,
-                )
-                well_id = new_well.id
-            else:
-                well_id = well[0].id
+            well_id = get_well_id(well_name, oil_deposit_id=oil_deposit)
             for perf_int in perf_data:
                 perf_ints_list.append(Perforation(
                     well_id=well_id,
@@ -139,15 +124,7 @@ class EORProdViewSet(viewsets.ModelViewSet):
         eor_prod = read_eor_prod(file, unit=unit)
         eor_prod_list = []
         for well_name, eor_data in eor_prod.items():
-            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
-            if len(well) == 0:
-                new_well = Well.objects.create(
-                    oil_deposit_id=oil_deposit,
-                    name=well_name,
-                )
-                well_id = new_well.id
-            else:
-                well_id = well[0].id
+            well_id = get_well_id(well_name, oil_deposit)
             for ed in eor_data:
                 eor_prod_list.append(EORProd(
                     well_id=well_id,
@@ -181,15 +158,7 @@ class EORInjViewSet(viewsets.ModelViewSet):
         eor_inj = read_eor_inj(file)
         eor_inj_list = []
         for well_name, eor_data in eor_inj.items():
-            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
-            if len(well) == 0:
-                new_well = Well.objects.create(
-                    oil_deposit_id=oil_deposit,
-                    name=well_name,
-                )
-                well_id = new_well.id
-            else:
-                well_id = well[0].id
+            well_id = get_well_id(well_name, oil_deposit)
             for ed in eor_data:
                 eor_inj_list.append(EORInj(
                     well_id=well_id,
@@ -222,16 +191,7 @@ class MineralizationViewSet(viewsets.ModelViewSet):
         mineralization_dict = read_mineralization(file)
         mineralization_list = []
         for el in mineralization_dict:
-            well_name = el['well']
-            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
-            if len(well) == 0:
-                new_well = Well.objects.create(
-                    oil_deposit_id=oil_deposit,
-                    name=well_name,
-                )
-                well_id = new_well.id
-            else:
-                well_id = well[0].id
+            well_id = get_well_id(el['well'], oil_deposit)
             mineralization_list.append(Mineralization(
                     well_id=well_id,
                     oil_deposit_id=oil_deposit,
@@ -259,16 +219,7 @@ class WCReasonViewSet(viewsets.ModelViewSet):
         wc_reason_dict = read_wc_reason(file)
         wc_reason_list = []
         for el in wc_reason_dict:
-            well_name = el['well']
-            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
-            if len(well) == 0:
-                new_well = Well.objects.create(
-                    oil_deposit_id=oil_deposit,
-                    name=well_name,
-                )
-                well_id = new_well.id
-            else:
-                well_id = well[0].id
+            well_id = get_well_id(el['well'], oil_deposit)
             wc_reason_list.append(WCReason(
                     well_id=well_id,
                     oil_deposit_id=oil_deposit,
@@ -277,5 +228,34 @@ class WCReasonViewSet(viewsets.ModelViewSet):
                     type=el.get('type'),
             ))
         WCReason.objects.bulk_create(wc_reason_list)
+        return Response({"status": "success"},
+                        status.HTTP_201_CREATED)
+
+
+class PressureViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PressureSerializer
+
+    def get_queryset(self):
+        return Pressure.objects.filter(author=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def upload_data(self, request):
+        file = request.FILES["file"]
+        oil_deposit = request.data["oil_deposit"]
+
+        pressure_dict = read_pressure(file)
+        pressure_list = []
+        for well_name, pressure_data in pressure_dict.items():
+            well_id = get_well_id(well_name, oil_deposit)
+            for pd in pressure_data:
+                pressure_list.append(Pressure(
+                    well_id=well_id,
+                    oil_deposit_id=oil_deposit,
+                    date=pd.get('date'),
+                    type=pd.get('type'),
+                    pressure=pd.get('pressure')
+                ))
+        Pressure.objects.bulk_create(pressure_list)
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)
