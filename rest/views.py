@@ -6,7 +6,9 @@ from rest_framework.decorators import action
 
 from .readers.coords_reader import read_coords
 from .readers.eor_reader import read_eor_prod, read_eor_inj
+from .readers.mineralization_reader import read_mineralization
 from .readers.perf_reader import read_perfs
+from .readers.wc_reason_reader import read_wc_reason
 from .serializers import *
 
 
@@ -201,5 +203,79 @@ class EORInjViewSet(viewsets.ModelViewSet):
                     agent_code=ed.get('agent_code'),
                 ))
         EORInj.objects.bulk_create(eor_inj_list)
+        return Response({"status": "success"},
+                        status.HTTP_201_CREATED)
+
+
+class MineralizationViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MineralizationSerializer
+
+    def get_queryset(self):
+        return Mineralization.objects.filter(author=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def upload_data(self, request):
+        file = request.FILES["file"]
+        oil_deposit = request.data["oil_deposit"]
+
+        mineralization_dict = read_mineralization(file)
+        mineralization_list = []
+        for el in mineralization_dict:
+            well_name = el['well']
+            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
+            if len(well) == 0:
+                new_well = Well.objects.create(
+                    oil_deposit_id=oil_deposit,
+                    name=well_name,
+                )
+                well_id = new_well.id
+            else:
+                well_id = well[0].id
+            mineralization_list.append(Mineralization(
+                    well_id=well_id,
+                    oil_deposit_id=oil_deposit,
+                    start_date=el.get('start'),
+                    end_date=el.get('end'),
+                    type=el.get('type'),
+            ))
+        Mineralization.objects.bulk_create(mineralization_list)
+        return Response({"status": "success"},
+                        status.HTTP_201_CREATED)
+
+
+class WCReasonViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = WCReasonSerializer
+
+    def get_queryset(self):
+        return WCReason.objects.filter(author=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def upload_data(self, request):
+        file = request.FILES["file"]
+        oil_deposit = request.data["oil_deposit"]
+
+        wc_reason_dict = read_wc_reason(file)
+        wc_reason_list = []
+        for el in wc_reason_dict:
+            well_name = el['well']
+            well = Well.objects.filter(name=well_name, oil_deposit_id=oil_deposit).all()
+            if len(well) == 0:
+                new_well = Well.objects.create(
+                    oil_deposit_id=oil_deposit,
+                    name=well_name,
+                )
+                well_id = new_well.id
+            else:
+                well_id = well[0].id
+            wc_reason_list.append(WCReason(
+                    well_id=well_id,
+                    oil_deposit_id=oil_deposit,
+                    date=el.get('date'),
+                    category=el.get('category'),
+                    type=el.get('type'),
+            ))
+        WCReason.objects.bulk_create(wc_reason_list)
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)

@@ -110,7 +110,7 @@ class Perforation(models.Model):
     layer = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.layer}, {self.top}"
+        return f"{self.well}, {self.layer}"
 
     class Meta:
         ordering = ['date']
@@ -142,7 +142,7 @@ class EORProd(models.Model):
     sgw = models.FloatField(null=True)
 
     def __str__(self):
-        return f"{self.level}, {self.date}"
+        return f"{self.well}, {self.date}"
 
     class Meta:
         ordering = ['date']
@@ -173,7 +173,61 @@ class EORInj(models.Model):
     agent_code = models.FloatField()
 
     def __str__(self):
-        return f"{self.level}, {self.date}"
+        return f"{self.well}, {self.date}"
+
+    class Meta:
+        ordering = ['date']
+
+
+class Mineralization(models.Model):
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='mineralizations',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='mineralizations',
+        on_delete=models.CASCADE,
+    )
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    type = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.well}, {self.type}"
+
+    class Meta:
+        ordering = ['start_date']
+
+
+class WCReason(models.Model):
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='wc_reasons',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='wc_reasons',
+        on_delete=models.CASCADE,
+    )
+    date = models.DateTimeField()
+    category = models.CharField(max_length=255)
+    type = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.well}, {self.type}"
 
     class Meta:
         ordering = ['date']
