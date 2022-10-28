@@ -30,13 +30,16 @@ def rename_columns(df, drop=True):
                      md=['md'],
                      q_oil=['добыча нефти за мес по скваж, т', 'ed14', 'ndobt', 'oil_volumetric', 'добыча нефти, м3'],
                      q_water=['добыча воды за мес по скваж, т', 'ed15', 'wdobt', 'water_volumetric', 'добыча воды, м3'],
+                     q_fluid=['qжид'],
                      q_water3=['s16', 'zakmesk', 'injection_volumetric', 'общая закачка', 'закачка воды, м3'],
                      sgw=['ed22', 'wvespr', 'water_density', 'процент обв, вес'],
                      category=['гтм если есть'],
                      pressure=['давл'],
                      x=['x', 'coordinates_x', 'координата x'],
                      y=['y', 'coordinates_y', 'координата y'],
-                     ngdu=['ed1', 's1', 'ngdu'])
+                     ngdu=['ed1', 's1', 'ngdu'],
+                     mark=['уров'],
+                     productivity=['кпрод_асу'])
     col_names = {k: '' for k in old_names.keys()}
     # search for same names
     for column in df.columns.values:
@@ -102,6 +105,8 @@ def processing_df(df, drop=True, rename=True):
 
 
 def read_df(file, sep=',', enc='utf-8', date_cols=False):
+    # todo: read content-type instead of name
+    # todo: detect encoding
     df_path = file.name
     try:
         if ('.csv' in df_path) or ('.txt' in df_path):
@@ -121,7 +126,6 @@ def read_df(file, sep=',', enc='utf-8', date_cols=False):
                 json_data = json.load(f)
             return pd.DataFrame(json_data)
         else:
-            # обработать
             return None
     except BaseException as e:
         print(f"Error loading file {df_path}. {str(e)}")

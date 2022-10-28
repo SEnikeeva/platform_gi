@@ -135,7 +135,7 @@ class EORProd(models.Model):
     level = models.CharField(max_length=50, null=True)
     layer = models.CharField(max_length=50, null=True)
     date = models.DateTimeField()
-    work_hours = models.IntegerField()
+    work_hours = models.FloatField()
     q_oil = models.FloatField()
     q_water = models.FloatField()
     fluid_rate = models.FloatField()
@@ -167,7 +167,7 @@ class EORInj(models.Model):
     level = models.CharField(max_length=50, null=True)
     layer = models.CharField(max_length=50, null=True)
     date = models.DateTimeField()
-    work_hours = models.IntegerField()
+    work_hours = models.FloatField()
     q_water3 = models.FloatField()
     acceleration = models.FloatField()
     agent_code = models.FloatField()
@@ -251,10 +251,42 @@ class Pressure(models.Model):
     )
     date = models.DateTimeField()
     pressure = models.FloatField()
-    type = models.CharField(max_length=255)
+    type = models.CharField(max_length=255, null=True)
+    q_fluid = models.FloatField(null=True)
+    level = models.CharField(max_length=50, null=True)
+    productivity = models.FloatField(null=True)
+    mark = models.FloatField(null=True)
 
     def __str__(self):
         return f"{self.well}, {self.pressure}"
+
+    class Meta:
+        ordering = ['date']
+
+
+class Work(models.Model):
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='works',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='works',
+        on_delete=models.CASCADE,
+    )
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    type = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.well}, {self.type}"
 
     class Meta:
         ordering = ['date']

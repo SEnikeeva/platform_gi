@@ -64,13 +64,11 @@ class CoordsViewSet(viewsets.ModelViewSet):
         coords_list = []
         for el in coords_dict:
             well_id = get_well_id(el['well'], oil_deposit)
+            del el['well']
             coords_list.append(Coords(
                 well_id=well_id,
                 oil_deposit_id=oil_deposit,
-                x=el.get('x'),
-                y=el.get('y'),
-                level=el.get('level'),
-                layer=el.get('layer')
+                **el
             ))
         Coords.objects.bulk_create(coords_list)
         return Response({"status": "success"},
@@ -97,11 +95,7 @@ class PerforationViewSet(viewsets.ModelViewSet):
                 perf_ints_list.append(Perforation(
                     well_id=well_id,
                     oil_deposit_id=oil_deposit,
-                    top=perf_int.get('top'),
-                    bot=perf_int.get('bot'),
-                    layer=perf_int.get('layer'),
-                    perf_type=perf_int.get('type'),
-                    date=perf_int.get('date')
+                    **perf_int
                 ))
         Perforation.objects.bulk_create(perf_ints_list)
         return Response({"status": "success"},
@@ -129,14 +123,7 @@ class EORProdViewSet(viewsets.ModelViewSet):
                 eor_prod_list.append(EORProd(
                     well_id=well_id,
                     oil_deposit_id=oil_deposit,
-                    date=ed.get('date'),
-                    level=ed.get('level'),
-                    layer=ed.get('layer'),
-                    work_hours=ed.get('work_hours'),
-                    q_oil=ed.get('q_oil'),
-                    q_water=ed.get('q_water'),
-                    fluid_rate=ed.get('fluid_rate'),
-                    sgw=ed.get('sgw')
+                    **ed
                 ))
         EORProd.objects.bulk_create(eor_prod_list)
         return Response({"status": "success"},
@@ -163,13 +150,7 @@ class EORInjViewSet(viewsets.ModelViewSet):
                 eor_inj_list.append(EORInj(
                     well_id=well_id,
                     oil_deposit_id=oil_deposit,
-                    date=ed.get('date'),
-                    level=ed.get('level'),
-                    layer=ed.get('layer'),
-                    work_hours=ed.get('work_hours'),
-                    q_water3=ed.get('q_water3'),
-                    acceleration=ed.get('acceleration'),
-                    agent_code=ed.get('agent_code'),
+                    **ed
                 ))
         EORInj.objects.bulk_create(eor_inj_list)
         return Response({"status": "success"},
@@ -192,12 +173,11 @@ class MineralizationViewSet(viewsets.ModelViewSet):
         mineralization_list = []
         for el in mineralization_dict:
             well_id = get_well_id(el['well'], oil_deposit)
+            del el['well']
             mineralization_list.append(Mineralization(
                     well_id=well_id,
                     oil_deposit_id=oil_deposit,
-                    start_date=el.get('start'),
-                    end_date=el.get('end'),
-                    type=el.get('type'),
+                    **el
             ))
         Mineralization.objects.bulk_create(mineralization_list)
         return Response({"status": "success"},
@@ -220,12 +200,11 @@ class WCReasonViewSet(viewsets.ModelViewSet):
         wc_reason_list = []
         for el in wc_reason_dict:
             well_id = get_well_id(el['well'], oil_deposit)
+            del el['well']
             wc_reason_list.append(WCReason(
                     well_id=well_id,
                     oil_deposit_id=oil_deposit,
-                    date=el.get('date'),
-                    category=el.get('category'),
-                    type=el.get('type'),
+                    **el
             ))
         WCReason.objects.bulk_create(wc_reason_list)
         return Response({"status": "success"},
@@ -252,9 +231,7 @@ class PressureViewSet(viewsets.ModelViewSet):
                 pressure_list.append(Pressure(
                     well_id=well_id,
                     oil_deposit_id=oil_deposit,
-                    date=pd.get('date'),
-                    type=pd.get('type'),
-                    pressure=pd.get('pressure')
+                    **pd
                 ))
         Pressure.objects.bulk_create(pressure_list)
         return Response({"status": "success"},

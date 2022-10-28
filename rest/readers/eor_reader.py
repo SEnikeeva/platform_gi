@@ -30,17 +30,14 @@ def read_eor_inj(file):
     if 'agent_code' not in eor_df.columns and 'agent' in eor_df.columns:
         eor_df['agent_code'] = eor_df['agent'].apply(get_agent_code)
 
-    columns = ['well', 'year', 'month', 'date', 'work_hours', 'q_water3', 'agent_code', 'level', 'layer']
+    columns = ['well', 'date', 'work_hours', 'q_water3', 'agent_code', 'level', 'layer']
     drop_cols = [col for col in eor_df.columns if col not in columns]
     eor_df.drop(columns=drop_cols,
                 inplace=True)
 
-    eor_df = eor_df.sort_values(by=['well', 'year'])
-    eor_df.reset_index(drop=True, inplace=True)
     eor_df['acceleration'] = (eor_df['q_water3'] * 24) / eor_df['work_hours']
     eor_df['acceleration'] = eor_df['acceleration'].fillna(0)
 
-    eor_df.reset_index(drop=True, inplace=True)
     eor = to_dict(eor_df, 'well')
 
     return eor
@@ -48,13 +45,11 @@ def read_eor_inj(file):
 
 def read_eor_prod(file, unit='t'):
     eor_df = read(file)
-    columns = ['well', 'year', 'month', 'date', 'work_hours', 'q_oil', 'q_water', 'sgw', 'level', 'layer']
+    columns = ['well', 'date', 'work_hours', 'q_oil', 'q_water', 'sgw', 'level', 'layer']
     drop_cols = [col for col in eor_df.columns if col not in columns]
     eor_df.drop(columns=drop_cols,
                 inplace=True)
 
-    eor_df = eor_df.sort_values(by=['well', 'year'])
-    eor_df.reset_index(drop=True, inplace=True)
     if 'sgw' in eor_df.columns:
         eor_df['sgw'] = eor_df['sgw'].replace(np.NaN, 1.1)
     if unit == 't':
@@ -67,7 +62,6 @@ def read_eor_prod(file, unit='t'):
     else:
         eor_df['fluid_rate'] = ((eor_df['q_water'] + eor_df['q_oil']) * 24) / eor_df['work_hours']
 
-    eor_df.reset_index(drop=True, inplace=True)
     eor = to_dict(eor_df, 'well')
     return eor
 
