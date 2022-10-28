@@ -9,31 +9,22 @@ from rest.util import to_dict, is_contains
 def read_perfs(file):
     perf_df = read_df(file)
     perf_df = processing_df(perf_df)
-    fields = ['layer', 'level', 'well', 'area', 'field', 'type_perf', 'type', 'date']
-    for f in fields:
-        if f not in perf_df.columns:
-            logging.warning(f"в перфорациях не указано поле: {f}")
-            perf_df[f] = -1
-            perf_df[f] = perf_df[f].astype(int)
-    perf_df['layer'] = perf_df['layer'].str.lower().str.replace(' ', '')
+    if 'layer' in perf_df.columns:
+        perf_df['layer'] = perf_df['layer'].str.lower().str.replace(' ', '')
 
-    try:
-        perf_df['date'] = perf_df['date'].dt.date
-    except AttributeError:
-        perf_df['date'] = perf_df['date'].apply(
-            lambda str_date: parser.parse(str_date).date())
-    perf_df['year'] = perf_df['date'].apply(lambda x: x.year)
-    perf_df.sort_values(by=['well', 'date'], ascending=True,
-                        inplace=True, kind='mergesort')
-    perf_df.reset_index(drop=True, inplace=True)
-    perf_df = perf_df[::-1]
-    perf_df.reset_index(drop=True, inplace=True)
+    if 'date' in perf_df.columns:
+        try:
+            perf_df['date'] = perf_df['date'].dt.date
+        except AttributeError:
+            perf_df['date'] = perf_df['date'].apply(
+                lambda str_date: parser.parse(str_date).date())
+        perf_df['year'] = perf_df['date'].apply(lambda x: x.year)
     # getting the perforation type
     perf_df['type'] = perf_df.apply(
         lambda x: get_type(x['type'], x['type_perf'], x['layer']),
         axis=1)
-    perf_df.reset_index(drop=True, inplace=True)
-    perf = to_dict(perf_df, ['type', 'date', 'top', 'bot', 'layer'], 'well')
+    perf_df['perf_type'] = perf_df['type']
+    perf = to_dict(perf_df, 'well', ['perf_type', 'date', 'top', 'bot', 'layer'])
     return perf
 
 

@@ -10,6 +10,7 @@ from .readers.mineralization_reader import read_mineralization
 from .readers.perf_reader import read_perfs
 from .readers.pressure_reader import read_pressure
 from .readers.wc_reason_reader import read_wc_reason
+from .readers.work_reader import read_works
 from .serializers import *
 from .util import get_well_id
 
@@ -234,5 +235,32 @@ class PressureViewSet(viewsets.ModelViewSet):
                     **pd
                 ))
         Pressure.objects.bulk_create(pressure_list)
+        return Response({"status": "success"},
+                        status.HTTP_201_CREATED)
+
+
+class WorkViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = WorkSerializer
+
+    def get_queryset(self):
+        return Work.objects.filter(author=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def upload_data(self, request):
+        file = request.FILES["file"]
+        oil_deposit = request.data["oil_deposit"]
+
+        work_dict = read_works(file)
+        work_list = []
+        for well_name, work_data in work_dict.items():
+            well_id = get_well_id(well_name, oil_deposit)
+            for wd in work_data:
+                work_list.append(Work(
+                    well_id=well_id,
+                    oil_deposit_id=oil_deposit,
+                    **wd
+                ))
+        Work.objects.bulk_create(work_list)
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)

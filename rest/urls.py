@@ -14,6 +14,7 @@ router.register(r'eor_inj', EORInjViewSet, basename='api-eor-inj')
 router.register(r'mineralization', MineralizationViewSet, basename='api-mineralization')
 router.register(r'wc_reason', WCReasonViewSet, basename='api-wc-reason')
 router.register(r'pressure', PressureViewSet, basename='api-pressure')
+router.register(r'work', WorkViewSet, basename='api-work')
 
 urlpatterns = [
     path('', include(router.urls)),

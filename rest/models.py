@@ -289,4 +289,4 @@ class Work(models.Model):
         return f"{self.well}, {self.type}"
 
     class Meta:
-        ordering = ['date']
+        ordering = ['start_date']

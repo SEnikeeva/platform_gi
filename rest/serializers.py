@@ -103,3 +103,13 @@ class PressureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pressure
         fields = '__all__'
+
+
+class WorkSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Work
+        fields = '__all__'
