@@ -8,6 +8,7 @@ from .readers.coords_reader import read_coords
 from .readers.eor_reader import read_eor_prod, read_eor_inj
 from .readers.mineralization_reader import read_mineralization
 from .readers.perf_reader import read_perfs
+from .readers.prc_reader import read_prc
 from .readers.pressure_reader import read_pressure
 from .readers.wc_reason_reader import read_wc_reason
 from .readers.work_reader import read_works
@@ -262,5 +263,32 @@ class WorkViewSet(viewsets.ModelViewSet):
                     **wd
                 ))
         Work.objects.bulk_create(work_list)
+        return Response({"status": "success"},
+                        status.HTTP_201_CREATED)
+
+
+class PressureRecoveryCurveViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PressureRecoveryCurveSerializer
+
+    def get_queryset(self):
+        return PressureRecoveryCurve.objects.filter(author=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def upload_data(self, request):
+        file = request.FILES["file"]
+        oil_deposit = request.data["oil_deposit"]
+
+        prc_dict = read_prc(file)
+        prc_list = []
+        for well_name, prc_data in prc_dict.items():
+            well_id = get_well_id(well_name, oil_deposit)
+            for wd in prc_data:
+                prc_list.append(PressureRecoveryCurve(
+                    well_id=well_id,
+                    oil_deposit_id=oil_deposit,
+                    **wd
+                ))
+        PressureRecoveryCurve.objects.bulk_create(prc_list)
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)

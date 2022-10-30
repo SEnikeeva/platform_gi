@@ -290,3 +290,30 @@ class Work(models.Model):
 
     class Meta:
         ordering = ['start_date']
+
+
+class PressureRecoveryCurve(models.Model):
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='prcs',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='prcs',
+        on_delete=models.CASCADE,
+    )
+    date = models.DateTimeField()
+    productivity = models.FloatField()
+    level = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.well}, {self.productivity}"
+
+    class Meta:
+        ordering = ['date']

@@ -15,6 +15,7 @@ router.register(r'mineralization', MineralizationViewSet, basename='api-minerali
 router.register(r'wc_reason', WCReasonViewSet, basename='api-wc-reason')
 router.register(r'pressure', PressureViewSet, basename='api-pressure')
 router.register(r'work', WorkViewSet, basename='api-work')
+router.register(r'pressure_recovery_curve', PressureRecoveryCurveViewSet, basename='api-pressure-recovery-curve')
 
 urlpatterns = [
     path('', include(router.urls)),

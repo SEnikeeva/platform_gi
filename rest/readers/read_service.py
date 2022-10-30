@@ -41,7 +41,7 @@ def rename_columns(df, drop=True):
                      y=['y', 'coordinates_y', 'координата y'],
                      ngdu=['ed1', 's1', 'ngdu'],
                      mark=['уров'],
-                     productivity=['кпрод_асу'])
+                     productivity=['кпрод_асу', 'кпр'])
     col_names = {k: '' for k in old_names.keys()}
     # search for same names
     for column in df.columns.values:
