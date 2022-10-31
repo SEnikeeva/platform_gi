@@ -16,6 +16,7 @@ router.register(r'wc_reason', WCReasonViewSet, basename='api-wc-reason')
 router.register(r'pressure', PressureViewSet, basename='api-pressure')
 router.register(r'work', WorkViewSet, basename='api-work')
 router.register(r'pressure_recovery_curve', PressureRecoveryCurveViewSet, basename='api-pressure-recovery-curve')
+router.register(r'water_analysis', WaterAnalysisViewSet, basename='api-water-analysis')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -10,6 +10,7 @@ from .readers.mineralization_reader import read_mineralization
 from .readers.perf_reader import read_perfs
 from .readers.prc_reader import read_prc
 from .readers.pressure_reader import read_pressure
+from .readers.water_analysis_reader import read_water_analysis
 from .readers.wc_reason_reader import read_wc_reason
 from .readers.work_reader import read_works
 from .serializers import *
@@ -290,5 +291,32 @@ class PressureRecoveryCurveViewSet(viewsets.ModelViewSet):
                     **wd
                 ))
         PressureRecoveryCurve.objects.bulk_create(prc_list)
+        return Response({"status": "success"},
+                        status.HTTP_201_CREATED)
+
+
+class WaterAnalysisViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = WaterAnalysisSerializer
+
+    def get_queryset(self):
+        return WaterAnalysis.objects.filter(author=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def upload_data(self, request):
+        file = request.FILES["file"]
+        oil_deposit = request.data["oil_deposit"]
+
+        water_analysis_dict = read_water_analysis(file)
+        water_analysis_list = []
+        for well_name, water_analysis_data in water_analysis_dict.items():
+            well_id = get_well_id(well_name, oil_deposit)
+            for wd in water_analysis_data:
+                water_analysis_list.append(WaterAnalysis(
+                    well_id=well_id,
+                    oil_deposit_id=oil_deposit,
+                    **wd
+                ))
+        WaterAnalysis.objects.bulk_create(water_analysis_list)
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)

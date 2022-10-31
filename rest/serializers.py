@@ -123,3 +123,14 @@ class PressureRecoveryCurveSerializer(serializers.ModelSerializer):
     class Meta:
         model = PressureRecoveryCurve
         fields = '__all__'
+
+
+class WaterAnalysisSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = WaterAnalysis
+        fields = '__all__'
+

@@ -5,17 +5,17 @@ import pandas as pd
 
 def rename_columns(df, drop=True):
     old_names = dict(well=['well', 'скваж', 'skw_nam', 'скв', 'well identifier', '№ скваж',
-                           'skw', 's3', 'ed3', 'wellbore', 'скважина', '№ скваж'],
+                           'skw', 's3', 'ed3', 'wellbore', 'скважина', '№ скваж', '№ скв.'],
                      well_id=['skw_id'],
                      top=['top', 'верх', 'кровля', 'верх интервала перфорации'],
                      bot=['bot', 'низ', 'подош', 'низ интервала перфорации'],
                      layer=['пласт', 'plast', 'formation'],
                      layer_id=['код_пласта'],
-                     level=['surface', 's6', 'ed8', 'гориз', 'goriz', 'fk_formation', 'гор', 'код горизонта'],
+                     level=['surface', 's6', 'ed8', 'гориз', 'горизонт', 'goriz', 'fk_formation', 'гор', 'код горизонта'],
                      area=['ed7', 's5', 'mest', 'площадь', 'площ', 'pl'],
                      field=['s4', 'ed6', 'месторождение', 'мест', 'mest'],
                      date=['дата перфорации', 'дата', 's9', 'ed11', 'дата_перф', 'дата_ис',
-                           'конец_рем', 'дата_бур', 'дата выявления старт', 'date'],
+                           'конец_рем', 'дата_бур', 'дата выявления старт', 'date', 'дата отбора'],
                      start=['дата_нач'],
                      end=['дата выявления стоп', 'дата_оконч'],
                      name=['основной_вид_работ'],
@@ -41,7 +41,10 @@ def rename_columns(df, drop=True):
                      y=['y', 'coordinates_y', 'координата y'],
                      ngdu=['ed1', 's1', 'ngdu'],
                      mark=['уров'],
-                     productivity=['кпрод_асу', 'кпр'])
+                     productivity=['кпрод_асу', 'кпр'],
+                     mineralization=['минерализация г/л'],
+                     sulfate=['so4 мг.экв/л']
+                     )
     col_names = {k: '' for k in old_names.keys()}
     # search for same names
     for column in df.columns.values:
@@ -114,7 +117,8 @@ def read_df(file, sep=',', enc='utf-8', date_cols=False):
         if ('.csv' in df_path) or ('.txt' in df_path):
             return pd.read_csv(file, sep=sep, encoding=enc, parse_dates=date_cols)
         elif '.xl' in df_path:
-            well_num_names = ['скваж', 'skw_nam', 'скв', 'well', '№ скваж', 'skw', 's3', 'ed3', 'скважина']
+            well_num_names = ['well', 'скваж', 'skw_nam', 'скв', 'well identifier', '№ скваж',
+                           'skw', 's3', 'ed3', 'wellbore', 'скважина', '№ скваж', '№ скв.']
             df = pd.read_excel(file, engine='openpyxl', skiprows=0)
             df.rename(
                 columns=lambda x: x if type(x) is not str else x.lower().strip(),
