@@ -2,6 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from rest.models import *
+from rest.submodels.diff_models import *
 
 
 admin.site.register(Project)
@@ -17,3 +18,5 @@ admin.site.register(Pressure)
 admin.site.register(Work)
 admin.site.register(PressureRecoveryCurve)
 admin.site.register(WaterAnalysis)
+
+admin.site.register(CoordsDiff)

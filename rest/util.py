@@ -1,4 +1,4 @@
-from rest.models import Well
+from rest.models import Well, OilDeposit
 
 
 def to_dict(df, index_name, columns=None):
@@ -34,3 +34,16 @@ def get_well_id(well_name, oil_deposit_id=None):
     else:
         well_id = well[0].id
     return well_id
+
+
+def get_oil_deposit_id(oil_deposit_name, company_id=None):
+    oil_deposit = OilDeposit.objects.filter(name=oil_deposit_name, company_id=company_id).all()
+    if len(oil_deposit) == 0:
+        new_oil_deposit = OilDeposit.objects.create(
+            name=oil_deposit_name,
+            company_id=company_id,
+        )
+        oil_deposit_id = new_oil_deposit.id
+    else:
+        oil_deposit_id = oil_deposit[0].id
+    return oil_deposit_id

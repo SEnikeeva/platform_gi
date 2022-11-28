@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from users.models import Company
+
 
 class Project(models.Model):
     name = models.CharField(max_length=50)
@@ -9,6 +11,11 @@ class Project(models.Model):
         get_user_model(),
         null=True,
         on_delete=models.SET_NULL
+    )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -29,6 +36,12 @@ class OilDeposit(models.Model):
     project = models.ForeignKey(
         Project,
         related_name='oil_deposits',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    company = models.ForeignKey(
+        Company,
+        null=True,
         on_delete=models.CASCADE
     )
 
@@ -51,6 +64,17 @@ class Well(models.Model):
         related_name='wells',
         on_delete=models.CASCADE,
     )
+    project = models.ForeignKey(
+        Project,
+        related_name='wells',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return self.name
@@ -65,6 +89,11 @@ class Coords(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
     well = models.ForeignKey(
         Well,
         related_name='coords',
@@ -74,6 +103,12 @@ class Coords(models.Model):
         OilDeposit,
         related_name='coords',
         on_delete=models.CASCADE,
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='coords',
+        on_delete=models.SET_NULL,
+        null=True
     )
     x = models.FloatField()
     y = models.FloatField()
@@ -92,6 +127,17 @@ class Perforation(models.Model):
         get_user_model(),
         null=True,
         on_delete=models.SET_NULL
+    )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='perforations',
+        on_delete=models.SET_NULL,
+        null=True
     )
     well = models.ForeignKey(
         Well,
@@ -121,6 +167,17 @@ class EORProd(models.Model):
         get_user_model(),
         null=True,
         on_delete=models.SET_NULL
+    )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='eor_prods',
+        on_delete=models.SET_NULL,
+        null=True
     )
     well = models.ForeignKey(
         Well,
@@ -154,6 +211,17 @@ class EORInj(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='eor_injs',
+        on_delete=models.SET_NULL,
+        null=True
+    )
     well = models.ForeignKey(
         Well,
         related_name='eor_injs',
@@ -185,6 +253,17 @@ class Mineralization(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='mineralizations',
+        on_delete=models.SET_NULL,
+        null=True
+    )
     well = models.ForeignKey(
         Well,
         related_name='mineralizations',
@@ -212,6 +291,17 @@ class WCReason(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='wc_reasons',
+        on_delete=models.SET_NULL,
+        null=True
+    )
     well = models.ForeignKey(
         Well,
         related_name='wc_reasons',
@@ -238,6 +328,17 @@ class Pressure(models.Model):
         get_user_model(),
         null=True,
         on_delete=models.SET_NULL
+    )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='pressures',
+        on_delete=models.SET_NULL,
+        null=True
     )
     well = models.ForeignKey(
         Well,
@@ -270,6 +371,17 @@ class Work(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='works',
+        on_delete=models.SET_NULL,
+        null=True
+    )
     well = models.ForeignKey(
         Well,
         related_name='works',
@@ -298,6 +410,17 @@ class PressureRecoveryCurve(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='prcs',
+        on_delete=models.SET_NULL,
+        null=True
+    )
     well = models.ForeignKey(
         Well,
         related_name='prcs',
@@ -325,6 +448,17 @@ class WaterAnalysis(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    company = models.ForeignKey(
+        Company,
+        null=True,
+        on_delete=models.CASCADE
+    )
+    project = models.ForeignKey(
+        Project,
+        related_name='water_analysis',
+        on_delete=models.SET_NULL,
+        null=True
+    )
     well = models.ForeignKey(
         Well,
         related_name='water_analysis',
@@ -345,4 +479,3 @@ class WaterAnalysis(models.Model):
 
     class Meta:
         ordering = ['date']
-

@@ -30,7 +30,7 @@ def read_eor_inj(file):
     if 'agent_code' not in eor_df.columns and 'agent' in eor_df.columns:
         eor_df['agent_code'] = eor_df['agent'].apply(get_agent_code)
 
-    columns = ['well', 'date', 'work_hours', 'q_water3', 'agent_code', 'level', 'layer']
+    columns = ['well', 'date', 'work_hours', 'q_water3', 'agent_code', 'level', 'layer', 'field']
     drop_cols = [col for col in eor_df.columns if col not in columns]
     eor_df.drop(columns=drop_cols,
                 inplace=True)
@@ -45,7 +45,7 @@ def read_eor_inj(file):
 
 def read_eor_prod(file, unit='t'):
     eor_df = read(file)
-    columns = ['well', 'date', 'work_hours', 'q_oil', 'q_water', 'sgw', 'level', 'layer']
+    columns = ['well', 'date', 'work_hours', 'q_oil', 'q_water', 'sgw', 'level', 'layer', 'field']
     drop_cols = [col for col in eor_df.columns if col not in columns]
     eor_df.drop(columns=drop_cols,
                 inplace=True)
