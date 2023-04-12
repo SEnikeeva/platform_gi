@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
+    'django.contrib.postgres',
     'rest',
-    'users'
+    'users',
+    'django.contrib.admindocs'
 ]
 
 MIDDLEWARE = [

@@ -5,11 +5,11 @@ import pandas as pd
 
 def rename_columns(df, drop=True):
     old_names = dict(well=['well', 'скваж', 'skw_nam', 'скв', 'well identifier', '№ скваж',
-                           'skw', 's3', 'ed3', 'wellbore', 'скважина', '№ скваж', '№ скв.'],
+                           'skw', 's3', 'ed3', 'wellbore', 'скважина', '№ скваж', '№ скв.',  '№ скв'],
                      well_id=['skw_id'],
                      top=['top', 'верх', 'кровля', 'верх интервала перфорации'],
                      bot=['bot', 'низ', 'подош', 'низ интервала перфорации'],
-                     layer=['пласт', 'plast', 'formation'],
+                     layer=['пласт', 'plast', 'formation', 'перфорированные пласты'],
                      layer_id=['код_пласта'],
                      level=['surface', 's6', 'ed8', 'гориз', 'горизонт', 'goriz', 'fk_formation', 'гор', 'код горизонта'],
                      area=['ed7', 's5', 'mest', 'площадь', 'площ', 'pl'],
@@ -39,11 +39,15 @@ def rename_columns(df, drop=True):
                      pressure=['давл'],
                      x=['x', 'coordinates_x', 'координата x'],
                      y=['y', 'coordinates_y', 'координата y'],
-                     ngdu=['ed1', 's1', 'ngdu'],
+                     ngdu=['ed1', 's1', 'ngdu', 'нгду'],
                      mark=['уров'],
                      productivity=['кпрод_асу', 'кпр'],
-                     mineralization=['минерализация г/л'],
-                     sulfate=['so4 мг.экв/л']
+                     mineralization=['минерализация г/л', 'м, г/л'],
+                     sulfate=['so4 мг.экв/л'],
+                     delta_18O=['δ18o (vsmow), ‰'],
+                     delta_D=['δd (vsmow), ‰'],
+                     unit=['единицы измерения'],
+                     rigidity=['жесткость, ммоль/л']
                      )
     col_names = {k: '' for k in old_names.keys()}
     # search for same names
@@ -98,35 +102,43 @@ def transliteration(numbers, one=True):
         return numbers
 
 
-def processing_df(df, drop=True, rename=True):
-    if rename:
+def processing_df(df, drop=True, headers=None):
+    if headers is None:
         df.rename(columns=lambda x: x if type(
             x) is not str else x.lower().strip(), inplace=True)
         df = rename_columns(df, drop)
+    else:
+        df.rename(headers, axis=1)
     if 'well' in df.columns:
         df['well'] = df['well'].apply(well_renaming)
         df['well'] = df['well'].apply(lambda x: x.split('т')[0]+'д' if x.endswith('т') else x)
     return df
 
 
-def read_df(file, sep=',', enc='utf-8', date_cols=False):
+def read_df(file, sep=',', enc='utf-8', date_cols=False, is_filename=False):
     # todo: read content-type instead of name
     # todo: detect encoding
-    df_path = file.name
+    df_path = file if is_filename else file.name
     try:
         if ('.csv' in df_path) or ('.txt' in df_path):
             return pd.read_csv(file, sep=sep, encoding=enc, parse_dates=date_cols)
         elif '.xl' in df_path:
             well_num_names = ['well', 'скваж', 'skw_nam', 'скв', 'well identifier', '№ скваж',
-                           'skw', 's3', 'ed3', 'wellbore', 'скважина', '№ скваж', '№ скв.']
-            df = pd.read_excel(file, engine='openpyxl', skiprows=0)
-            df.rename(
-                columns=lambda x: x if type(x) is not str else x.lower().strip(),
-                inplace=True)
-            if len(list(set(well_num_names).intersection(df.columns))) == 0:
-                return pd.read_excel(file, engine='openpyxl', skiprows=1)
-            else:
-                return df
+                           'skw', 's3', 'ed3', 'wellbore', 'скважина', '№ скваж', '№ скв.', '№ скв']
+            is_found = False
+            i = 0
+            while not is_found:
+                df = pd.read_excel(file, engine='openpyxl', skiprows=i)
+                df.rename(
+                    columns=lambda x: x if type(x) is not str else x.lower().strip(),
+                    inplace=True)
+                if len(list(set(well_num_names).intersection(df.columns))) != 0:
+                    return df
+                i += 1
+                if i > 10:
+                    is_found = True
+            print(f"Error loading file {df_path}. No well in columns")
+            return None
         elif '.json' in df_path:
             with open(file, 'r', encoding=enc) as f:
                 json_data = json.load(f)

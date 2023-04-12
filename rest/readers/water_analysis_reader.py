@@ -7,7 +7,7 @@ from rest.util import to_dict
 def read_water_analysis(file):
     water_analysis_df = read_df(file)
     water_analysis_df = processing_df(water_analysis_df)
-    columns = ['well', 'date', 'mineralization', 'level', 'sulfate']
+    columns = ['well', 'date', 'mineralization', 'level', 'sulfate', 'field']
     drop_cols = [col for col in water_analysis_df.columns if col not in columns]
     water_analysis_df.drop(columns=drop_cols,
                            inplace=True)

@@ -134,3 +134,42 @@ class WaterAnalysisSerializer(serializers.ModelSerializer):
         model = WaterAnalysis
         fields = '__all__'
 
+
+class IsotopySerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Isotopy
+        fields = '__all__'
+
+
+class WaterMicroMacroSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = WaterMicroMacro
+        fields = '__all__'
+
+
+class OilMicroMacroSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = OilMicroMacro
+        fields = '__all__'
+
+
+class SixComponentsSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = SixComponents
+        fields = '__all__'

@@ -22,7 +22,11 @@ def read_perfs(file):
         lambda x: get_type(x['type'], x['type_perf'], x['layer']),
         axis=1)
     perf_df['perf_type'] = perf_df['type']
-    perf = to_dict(perf_df, 'well', ['perf_type', 'date', 'top', 'bot', 'layer'])
+    columns = ['perf_type', 'date', 'top', 'bot', 'layer', 'field']
+    drop_cols = [col for col in perf_df.columns if col not in columns]
+    perf_df.drop(columns=drop_cols,
+                 inplace=True)
+    perf = to_dict(perf_df, 'well')
     return perf
 
 

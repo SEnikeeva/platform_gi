@@ -17,6 +17,10 @@ router.register(r'pressure', PressureViewSet, basename='api-pressure')
 router.register(r'work', WorkViewSet, basename='api-work')
 router.register(r'pressure_recovery_curve', PressureRecoveryCurveViewSet, basename='api-pressure-recovery-curve')
 router.register(r'water_analysis', WaterAnalysisViewSet, basename='api-water-analysis')
+router.register(r'isotopy', IsotopyViewSet, basename='api-isotopy')
+router.register(r'water_micro_macro', WaterMicroMacroViewSet, basename='api-water-micro-macro')
+router.register(r'oil_micro_macro', OilMicroMacroViewSet, basename='api-oil-micro-macro')
+router.register(r'six_components', SixComponentsViewSet, basename='api-six-components')
 
 urlpatterns = [
     path('', include(router.urls)),

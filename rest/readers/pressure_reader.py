@@ -16,7 +16,7 @@ def read_pressure(file):
             lambda str_date: parser.parse(str_date).date())
     hds_df['date'] = pd.to_datetime(hds_df['date'])
     hds_df['type'].replace(to_replace={'p заб': 'н дин', 'p пл': 'н ст'}, inplace=True)
-    columns = ['well', 'pressure', 'date', 'type', 'level', 'mark', 'productivity', 'q_fluid']
+    columns = ['well', 'pressure', 'date', 'type', 'level', 'mark', 'productivity', 'q_fluid', 'field']
     drop_cols = [col for col in hds_df.columns if col not in columns]
     hds_df.drop(columns=drop_cols,
                 inplace=True)

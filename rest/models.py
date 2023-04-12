@@ -1,22 +1,12 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import HStoreField
 
+from rest.submodels.abstract_models import AuthorCompanyModel
 from users.models import Company
 
 
-class Project(models.Model):
+class Project(AuthorCompanyModel):
     name = models.CharField(max_length=50)
-
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
 
     def __str__(self):
         return self.name
@@ -25,25 +15,15 @@ class Project(models.Model):
         ordering = ['name']
 
 
-class OilDeposit(models.Model):
+class OilDeposit(AuthorCompanyModel):
     name = models.CharField(max_length=50)
 
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
     project = models.ForeignKey(
         Project,
         related_name='oil_deposits',
         on_delete=models.SET_NULL,
         null=True
     )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
 
     def __str__(self):
         return self.name
@@ -52,13 +32,8 @@ class OilDeposit(models.Model):
         ordering = ['name']
 
 
-class Well(models.Model):
+class Well(AuthorCompanyModel):
     name = models.CharField(max_length=50)
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
     oil_deposit = models.ForeignKey(
         OilDeposit,
         related_name='wells',
@@ -70,11 +45,6 @@ class Well(models.Model):
         on_delete=models.SET_NULL,
         null=True
     )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
 
     def __str__(self):
         return self.name
@@ -83,17 +53,7 @@ class Well(models.Model):
         ordering = ['name']
 
 
-class Coords(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class Coords(AuthorCompanyModel):
     well = models.ForeignKey(
         Well,
         related_name='coords',
@@ -122,17 +82,7 @@ class Coords(models.Model):
         ordering = ['level']
 
 
-class Perforation(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class Perforation(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='perforations',
@@ -162,17 +112,7 @@ class Perforation(models.Model):
         ordering = ['date']
 
 
-class EORProd(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class EORProd(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='eor_prods',
@@ -205,17 +145,7 @@ class EORProd(models.Model):
         ordering = ['date']
 
 
-class EORInj(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class EORInj(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='eor_injs',
@@ -247,17 +177,7 @@ class EORInj(models.Model):
         ordering = ['date']
 
 
-class Mineralization(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class Mineralization(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='mineralizations',
@@ -285,17 +205,7 @@ class Mineralization(models.Model):
         ordering = ['start_date']
 
 
-class WCReason(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class WCReason(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='wc_reasons',
@@ -323,17 +233,7 @@ class WCReason(models.Model):
         ordering = ['date']
 
 
-class Pressure(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class Pressure(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='pressures',
@@ -365,17 +265,7 @@ class Pressure(models.Model):
         ordering = ['date']
 
 
-class Work(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class Work(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='works',
@@ -404,17 +294,7 @@ class Work(models.Model):
         ordering = ['start_date']
 
 
-class PressureRecoveryCurve(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class PressureRecoveryCurve(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='prcs',
@@ -442,17 +322,7 @@ class PressureRecoveryCurve(models.Model):
         ordering = ['date']
 
 
-class WaterAnalysis(models.Model):
-    author = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    company = models.ForeignKey(
-        Company,
-        null=True,
-        on_delete=models.CASCADE
-    )
+class WaterAnalysis(AuthorCompanyModel):
     project = models.ForeignKey(
         Project,
         related_name='water_analysis',
@@ -479,3 +349,134 @@ class WaterAnalysis(models.Model):
 
     class Meta:
         ordering = ['date']
+
+
+class Isotopy(AuthorCompanyModel):
+    project = models.ForeignKey(
+        Project,
+        related_name='isotopy',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='isotopy',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='isotopy',
+        on_delete=models.CASCADE,
+    )
+    date = models.DateTimeField()
+    area = models.CharField(max_length=50, null=True)
+    ngdu = models.CharField(max_length=50, null=True)
+    level = models.CharField(max_length=50, null=True)
+    layer = models.CharField(max_length=50, null=True)
+    comment = models.CharField(max_length=255, null=True)
+    delta_D = models.FloatField()
+    delta_18O = models.FloatField()
+
+    def __str__(self):
+        return f"{self.well}, {self.delta_D}, {self.delta_18O}"
+
+    class Meta:
+        ordering = ['date']
+
+
+class WaterMicroMacro(AuthorCompanyModel):
+    project = models.ForeignKey(
+        Project,
+        related_name='water_micro_macro',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='water_micro_macro',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='water_micro_macro',
+        on_delete=models.CASCADE,
+    )
+    date = models.DateTimeField()
+    ngdu = models.CharField(max_length=50, null=True)
+    area = models.CharField(max_length=50, null=True)
+    device = models.CharField(max_length=50, null=True)
+    comment = models.CharField(max_length=255, null=True)
+    layer = models.CharField(max_length=255, null=True)
+    components = HStoreField(null=True)
+
+    def __str__(self):
+        return f"{self.well}, {self.date}"
+
+    class Meta:
+        ordering = ['date']
+
+
+class OilMicroMacro(AuthorCompanyModel):
+    project = models.ForeignKey(
+        Project,
+        related_name='oil_micro_macro',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='oil_micro_macro',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='oil_micro_macro',
+        on_delete=models.CASCADE,
+    )
+    date = models.DateTimeField()
+    ngdu = models.CharField(max_length=50, null=True)
+    area = models.CharField(max_length=50, null=True)
+    device = models.CharField(max_length=50, null=True)
+    comment = models.CharField(max_length=255, null=True)
+    components = HStoreField(null=True)
+
+    def __str__(self):
+        return f"{self.well}, {self.date}"
+
+    class Meta:
+        ordering = ['date']
+
+
+class SixComponents(AuthorCompanyModel):
+    project = models.ForeignKey(
+        Project,
+        related_name='six_components',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    well = models.ForeignKey(
+        Well,
+        related_name='six_components',
+        on_delete=models.CASCADE,
+    )
+    oil_deposit = models.ForeignKey(
+        OilDeposit,
+        related_name='six_components',
+        on_delete=models.CASCADE,
+    )
+    date = models.DateTimeField()
+    ngdu = models.CharField(max_length=50, null=True)
+    unit = models.CharField(max_length=50, null=True)
+    comment = models.CharField(max_length=255, null=True)
+    mineralization = models.FloatField()
+    rigidity = models.FloatField()
+
+    anions = HStoreField(null=True)
+    cations = HStoreField(null=True)
+
+    def __str__(self):
+        return f"{self.well}, {self.date}"
+
+    class Meta:
+        ordering = ['date']
+
